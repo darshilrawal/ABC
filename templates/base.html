@@ -1,0 +1,678 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Atal Bharat Creations | Clothing Manufacturing & Wholesale in Surat, Gujarat. Premium Kurtis, Tops, Short Kurtis & Jeans for B2B wholesalers and bulk buyers. The Symbol of Trust.">
+    <meta name="keywords"
+        content="B2B clothing manufacturer, wholesale clothing, Kurtis manufacturer, Surat textile, bulk clothing supplier">
+    <meta name="author" content="Atal Bharat Creation">
+
+    <title>{% block title %}ABC - Atal Bharat Creation{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.jpg' %}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{% url 'main:home' %}" class="navbar-brand">
+                <img src="{% static 'images/logo.jpg' %}" alt="ABC - Atal Bharat Creation Logo" class="navbar-logo-img">
+                <span class="navbar-brand-text">
+                    <span class="navbar-brand-name">Atal Bharat Creation</span>
+                    <span class="navbar-tagline">The Symbol of Trust</span>
+                </span>
+            </a>
+
+            <ul class="navbar-nav">
+                <li><a href="{% url 'main:home' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+                </li>
+                <li><a href="{% url 'products:list' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'products' %}active{% endif %}">Products</a>
+                </li>
+                <li><a href="{% url 'main:about' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
+                </li>
+                <li><a href="{% url 'contact:contact' %}"
+                        class="nav-link {% if request.resolver_match.app_name == 'contact' %}active{% endif %}">Contact</a>
+                </li>
+
+                <!-- Mobile Menu Actions (visible only on mobile when menu is open) -->
+                <li class="mobile-menu-actions">
+                    <a href="https://www.instagram.com/atalbharatcreation?igsh=YXptOXEzMmx4NzRj"
+                        class="btn btn-secondary btn-sm" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                        Follow Us
+                    </a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:profile' %}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-user"></i>
+                        {{ user.first_name|default:user.username }}
+                    </a>
+                    {% if user.is_staff or user.is_superuser %}
+                    <a href="{% url 'admin:index' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-cog"></i>
+                        Admin Panel
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'accounts:logout' %}" class="btn btn-outline btn-sm">
+                        Logout
+                    </a>
+                    {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </a>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-outline btn-sm">
+                        Register
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'contact:inquiry' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-envelope"></i>
+                        Bulk Inquiry
+                    </a>
+                </li>
+            </ul>
+
+            <div class="navbar-actions">
+                <a href="https://www.instagram.com/atalbharatcreation?igsh=YXptOXEzMmx4NzRj" class="social-link"
+                    aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+                <button class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                </button>
+
+                <!-- Cart Link -->
+                <a href="{% url 'cart:cart_detail' %}" class="cart-btn" aria-label="View Cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    {% with total_items=cart|length %}
+                    {% if total_items > 0 %}
+                    <span class="cart-badge">{{ total_items }}</span>
+                    {% endif %}
+                    {% endwith %}
+                </a>
+
+                <!-- Profile Dropdown -->
+                {% if user.is_authenticated %}
+                <div class="profile-dropdown">
+                    <button class="btn btn-secondary btn-sm profile-toggle">
+                        <i class="fas fa-user"></i>
+                        {{ user.first_name|default:user.username }}
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="profile-dropdown-menu">
+                        <a href="{% url 'accounts:profile' %}" class="dropdown-item">
+                            <i class="fas fa-user-circle"></i>
+                            My Profile
+                        </a>
+                        {% if user.is_staff or user.is_superuser %}
+                        <a href="{% url 'admin:index' %}" class="dropdown-item admin-link">
+                            <i class="fas fa-cog"></i>
+                            Admin Panel
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'accounts:logout' %}" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="profile-dropdown">
+                    <button class="btn btn-secondary btn-sm profile-toggle">
+                        <i class="fas fa-user"></i>
+                        Profile
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="profile-dropdown-menu">
+                        <a href="{% url 'accounts:login' %}" class="dropdown-item">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Login
+                        </a>
+                        <a href="{% url 'accounts:register' %}" class="dropdown-item">
+                            <i class="fas fa-user-plus"></i>
+                            Register
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <a href="{% url 'contact:inquiry' %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-envelope"></i>
+                    Bulk Inquiry
+                </a>
+                <div class="mobile-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Toast Notifications -->
+    {% if messages %}
+    <div class="toast-container">
+        {% for message in messages %}
+        <div class="toast toast-{{ message.tags }}" data-auto-dismiss="true">
+            <div class="toast-icon">
+                {% if message.tags == 'success' %}
+                <i class="fas fa-check-circle"></i>
+                {% elif message.tags == 'error' %}
+                <i class="fas fa-exclamation-circle"></i>
+                {% elif message.tags == 'warning' %}
+                <i class="fas fa-exclamation-triangle"></i>
+                {% else %}
+                <i class="fas fa-info-circle"></i>
+                {% endif %}
+            </div>
+            <div class="toast-content">
+                <div class="toast-message">{{ message }}</div>
+            </div>
+            <button class="toast-close" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="{% static 'images/logo.jpg' %}" alt="ABC - Atal Bharat Creation Logo"
+                        class="footer-logo-img">
+                    <p class="footer-tagline"
+                        style="font-style: italic; color: var(--accent-primary); margin-bottom: 10px;">
+                        "हर भारतवासी की पसंद, 'अटल भारत' के संग"
+                    </p>
+                    <p class="footer-description">
+                        Clothing Manufacturing & Wholesale. We specialize in premium quality Kurtis,
+                        Tops, Short Kurtis, and Jeans for wholesalers and bulk buyers across India.
+                    </p>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/atalbharatcreation?igsh=YXptOXEzMmx4NzRj" class="social-link"
+                            aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/917069826157" class="social-link" aria-label="WhatsApp"
+                            target="_blank"><i class="fab fa-whatsapp"></i></a>
+                        <a href="mailto:atalbharatcreation@gmail.com" class="social-link" aria-label="Email"><i
+                                class="fas fa-envelope"></i></a>
+                        <a href="tel:+917069826157" class="social-link" aria-label="Call"><i
+                                class="fas fa-phone"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <div class="footer-links">
+                        <a href="{% url 'main:home' %}" class="footer-link">Home</a>
+                        <a href="{% url 'products:list' %}" class="footer-link">Products</a>
+                        <a href="{% url 'main:about' %}" class="footer-link">About Us</a>
+                        <a href="{% url 'contact:contact' %}" class="footer-link">Contact</a>
+                        <a href="{% url 'contact:inquiry' %}" class="footer-link">Bulk Inquiry</a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Categories</h4>
+                    <div class="footer-links">
+                        <a href="{% url 'products:list' %}?category=kurtis" class="footer-link">Kurtis</a>
+                        <a href="{% url 'products:list' %}?category=short_kurtis" class="footer-link">Short Kurtis</a>
+                        <a href="{% url 'products:list' %}?category=tops" class="footer-link">Tops</a>
+                        <a href="{% url 'products:list' %}?category=jeans" class="footer-link">Jeans</a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Contact Info</h4>
+                    <div class="footer-links">
+                        <span class="footer-link"><i class="fas fa-map-marker-alt"
+                                style="margin-right: 8px; color: var(--accent-primary);"></i> 1050–1051, Tirupati
+                            Market, Ring Road, Surat – 395002</span>
+                        <span class="footer-link"><i class="fas fa-phone"
+                                style="margin-right: 8px; color: var(--accent-primary);"></i> +91 88661 56157 | +91
+                            70698 26157</span>
+                        <span class="footer-link"><i class="fas fa-envelope"
+                                style="margin-right: 8px; color: var(--accent-primary);"></i>
+                            atalbharatcreation@gmail.com</span>
+                        <span class="footer-link"><i class="fas fa-id-card"
+                                style="margin-right: 8px; color: var(--accent-primary);"></i> GSTIN:
+                            24AASPR5788C1Z5</span>
+                        <span class="footer-link"><i class="fas fa-clock"
+                                style="margin-right: 8px; color: var(--accent-primary);"></i> Mon-Sat: 9AM - 7PM</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    &copy; 2024 Atal Bharat Creation. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Widget -->
+    <div class="wa-widget" id="waWidget">
+
+        <!-- Popup Card -->
+        <div class="wa-popup" id="waPopup">
+            <div class="wa-popup-header">
+                <div class="wa-popup-avatar">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div class="wa-popup-info">
+                    <span class="wa-popup-name">Atal Bharat Creation</span>
+                    <span class="wa-popup-status">
+                        <span class="wa-dot"></span> Typically replies instantly
+                    </span>
+                </div>
+                <button class="wa-popup-close" id="waClose" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="wa-popup-body">
+                <div class="wa-bubble">
+                    <p>👋 Hello! How can we help you?</p>
+                    <p>Chat with us on WhatsApp for bulk pricing, product inquiries, or any questions.</p>
+                    <span class="wa-time">Just now</span>
+                </div>
+            </div>
+            <a class="wa-popup-btn"
+                href="https://wa.me/917069826157?text=Hello%20Atal%20Bharat%20Creation!%20I%20am%20interested%20in%20your%20clothing%20products.%20Please%20share%20more%20details."
+                target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-whatsapp"></i>
+                Start Chat on WhatsApp
+            </a>
+        </div>
+
+        <!-- Floating Button -->
+        <button class="wa-fab" id="waFab" aria-label="Chat on WhatsApp">
+            <i class="fab fa-whatsapp wa-icon-open"></i>
+            <i class="fas fa-times wa-icon-close"></i>
+            <span class="wa-pulse"></span>
+        </button>
+    </div>
+
+    <style>
+        /* ── Widget Container ── */
+        .wa-widget {
+            position: fixed;
+            bottom: 28px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 14px;
+            /* CRITICAL: container has a large invisible bounding box (popup width × height).
+               Setting pointer-events:none on the container means it NEVER blocks
+               taps on elements below it. Only specific interactive children get events. */
+            pointer-events: none;
+        }
+
+        /* Re-enable events ONLY on the FAB button (always interactive) */
+        .wa-fab {
+            pointer-events: auto;
+        }
+
+        /* Re-enable events on popup and ALL its children ONLY when open */
+        .wa-popup.open,
+        .wa-popup.open * {
+            pointer-events: auto;
+        }
+
+        /* ── Popup Card ── */
+        .wa-popup {
+            width: 320px;
+            background: var(--bg-secondary, #1a1a1a);
+            border: 1px solid var(--border-color, #2a2a2a);
+            border-radius: 18px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(16px) scale(0.96);
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            transform-origin: bottom right;
+        }
+
+        .wa-popup.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+
+        /* ── Popup Header ── */
+        .wa-popup-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 18px;
+            background: #25D366;
+        }
+
+        .wa-popup-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .wa-popup-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .wa-popup-name {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .wa-popup-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .wa-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #fff;
+            flex-shrink: 0;
+            animation: waBlink 1.6s infinite;
+        }
+
+        .wa-popup-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .wa-popup-close:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ── Popup Body ── */
+        .wa-popup-body {
+            padding: 18px;
+            background: var(--bg-primary, #0d0d0d);
+        }
+
+        .wa-bubble {
+            background: var(--bg-tertiary, #252525);
+            border-radius: 12px 12px 12px 4px;
+            padding: 14px 16px;
+            position: relative;
+            max-width: 90%;
+        }
+
+        .wa-bubble p {
+            font-size: 0.875rem;
+            color: var(--text-primary, #ffffff);
+            line-height: 1.5;
+            margin: 0 0 6px 0;
+        }
+
+        .wa-bubble p:last-of-type {
+            margin-bottom: 8px;
+        }
+
+        .wa-time {
+            font-size: 0.7rem;
+            color: var(--text-muted, #666);
+            display: block;
+            text-align: right;
+        }
+
+        /* ── CTA Button ── */
+        .wa-popup-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 20px;
+            background: #25D366;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .wa-popup-btn:hover {
+            background: #1ebe5d;
+            color: #fff;
+            transform: none;
+        }
+
+        .wa-popup-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* ── FAB Button ── */
+        .wa-fab {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #25D366;
+            border: none;
+            color: #fff;
+            font-size: 1.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 24px rgba(37, 211, 102, 0.45);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .wa-fab:hover {
+            background: #1ebe5d;
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.55);
+        }
+
+        .wa-icon-close {
+            display: none;
+            font-size: 1.4rem;
+        }
+
+        .wa-widget.active .wa-icon-open {
+            display: none;
+        }
+
+        .wa-widget.active .wa-icon-close {
+            display: block;
+        }
+
+        /* ── Pulse Ring ── */
+        .wa-pulse {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 3px solid #25D366;
+            animation: waPulse 2s ease-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes waPulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.75;
+            }
+
+            100% {
+                transform: scale(1.7);
+                opacity: 0;
+            }
+        }
+
+        @keyframes waBlink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* ── Notification Badge (shows before first open) ── */
+        .wa-fab::after {
+            content: '1';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 18px;
+            height: 18px;
+            background: #ff4d4d;
+            border-radius: 50%;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--bg-primary, #0d0d0d);
+            line-height: 1;
+        }
+
+        .wa-widget.active .wa-fab::after,
+        .wa-widget.seen .wa-fab::after {
+            display: none;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 480px) {
+            .wa-widget {
+                bottom: 18px;
+                right: 14px;
+            }
+
+            .wa-popup {
+                width: calc(100vw - 28px);
+            }
+
+            .wa-fab {
+                width: 54px;
+                height: 54px;
+                font-size: 1.6rem;
+            }
+        }
+
+        /* ── Hide WhatsApp widget when mobile nav is open ──
+           body.mobile-nav-open set by main.js; #waWidget ID selector
+           gives highest CSS specificity to beat .wa-widget { display:flex } */
+        @media (max-width: 768px) {
+            body.mobile-nav-open #waWidget {
+                display: none !important;
+                pointer-events: none !important;
+            }
+        }
+    </style>
+
+    <script>
+        (function () {
+            const widget = document.getElementById('waWidget');
+            const fab = document.getElementById('waFab');
+            const popup = document.getElementById('waPopup');
+            const closeBtn = document.getElementById('waClose');
+
+            function openPopup() {
+                widget.classList.add('active', 'seen');
+                popup.classList.add('open');
+            }
+
+            function closePopup() {
+                widget.classList.remove('active');
+                popup.classList.remove('open');
+            }
+
+            fab.addEventListener('click', function () {
+                widget.classList.contains('active') ? closePopup() : openPopup();
+            });
+
+            closeBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                closePopup();
+            });
+
+            // Close on outside click
+            document.addEventListener('click', function (e) {
+                if (!widget.contains(e.target)) closePopup();
+            });
+
+            // Auto-open popup after 4 s on first visit
+            if (!sessionStorage.getItem('wa_seen')) {
+                setTimeout(function () {
+                    openPopup();
+                    sessionStorage.setItem('wa_seen', '1');
+                }, 4000);
+            } else {
+                widget.classList.add('seen');
+            }
+        })();
+    </script>
+
+    <!-- Main JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

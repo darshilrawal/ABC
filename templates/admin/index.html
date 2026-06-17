@@ -1,0 +1,347 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n %}
+{% load log %}
+{% load dashboard_tags %}
+
+{% block content_title %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+    <!-- Premium Dashboard Header with Stats -->
+    <div
+        style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 16px; padding: 32px; margin-bottom: 32px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); position: relative; overflow: hidden;">
+        <!-- Decorative Elements -->
+        <div
+            style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255, 107, 53, 0.15) 0%, transparent 70%); border-radius: 50%;">
+        </div>
+        <div
+            style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255, 140, 90, 0.1) 0%, transparent 70%); border-radius: 50%;">
+        </div>
+
+        <div style="position: relative; z-index: 1;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                <div>
+                    <h1
+                        style="color: white; font-size: 2rem; font-weight: 700; margin: 0 0 8px 0; font-family: 'Poppins', sans-serif;">
+                        Welcome back, {{ user.get_username|title }}
+                    </h1>
+                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 1rem; margin: 0;">
+                        Here's what's happening with your business today
+                    </p>
+                </div>
+                <div
+                    style="background: rgba(255, 107, 53, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 107, 53, 0.3); border-radius: 12px; padding: 12px 20px;">
+                    <div
+                        style="color: rgba(255, 255, 255, 0.7); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">
+                        Today</div>
+                    <div style="color: white; font-size: 1.25rem; font-weight: 600;" id="current-date"></div>
+                </div>
+            </div>
+
+            <!-- Key Metrics Row -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                <!-- Total Products Metric -->
+                <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; transition: all 0.3s ease; cursor: pointer;"
+                    onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(255, 107, 53, 0.2)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+                    onclick="window.location.href='/admin/products/product/';">
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);">
+                            <i class="fas fa-box" style="color: white; font-size: 1.25rem;"></i>
+                        </div>
+                        <span
+                            style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Active</span>
+                    </div>
+                    <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-bottom: 4px;">Total
+                        Products</div>
+                    <div style="color: white; font-size: 2rem; font-weight: 700; margin-bottom: 8px;">
+                        {% get_total_products %}
+                    </div>
+                    <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.75rem;">
+                        Click to view all products
+                    </div>
+                </div>
+
+                <!-- Categories Metric -->
+                <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(59, 130, 246, 0.2)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
+                            <i class="fas fa-tags" style="color: white; font-size: 1.25rem;"></i>
+                        </div>
+                        <span
+                            style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">4
+                            Types</span>
+                    </div>
+                    <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-bottom: 4px;">Categories
+                    </div>
+                    <div style="color: white; font-size: 2rem; font-weight: 700; margin-bottom: 8px;">4</div>
+                    <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.75rem;">
+                        Jeans, Tops, Kurtas, Sets
+                    </div>
+                </div>
+
+                <!-- Users Metric -->
+                <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; transition: all 0.3s ease; cursor: pointer;"
+                    onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(168, 85, 247, 0.2)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+                    onclick="window.location.href='/admin/auth/user/';">
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);">
+                            <i class="fas fa-users" style="color: white; font-size: 1.25rem;"></i>
+                        </div>
+                        <span
+                            style="background: rgba(168, 85, 247, 0.15); color: #a855f7; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Online</span>
+                    </div>
+                    <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-bottom: 4px;">Total Users
+                    </div>
+                    <div style="color: white; font-size: 2rem; font-weight: 700; margin-bottom: 8px;">
+                        {% get_total_users %}
+                    </div>
+                    <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.75rem;">
+                        Click to view all users
+                    </div>
+                </div>
+
+                <!-- Quick Action Card -->
+                <div style="background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%); border-radius: 12px; padding: 20px; box-shadow: 0 8px 24px rgba(255, 107, 53, 0.3); transition: all 0.3s ease; cursor: pointer;"
+                    onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 32px rgba(255, 107, 53, 0.4)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(255, 107, 53, 0.3)';"
+                    onclick="window.location.href='{% url 'admin:products_product_add' %}';">
+                    <div style="text-align: center;">
+                        <div
+                            style="width: 56px; height: 56px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <i class="fas fa-plus" style="color: white; font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 style="color: white; font-size: 1.1rem; font-weight: 600; margin: 0 0 8px 0;">Add New
+                            Product</h3>
+                        <p style="color: rgba(255, 255, 255, 0.9); font-size: 0.875rem; margin: 0;">Create a new product
+                            listing</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div id="main-layout-container" style="display: block; margin-bottom: 32px;">
+        <!-- Note: padding-right makes space for the fixed sidebar on desktop -->
+
+        <!-- Left Column: Management Sections -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+
+            <!-- App List -->
+            {% if app_list %}
+            {% for app in app_list %}
+            <div style="background: var(--admin-bg-secondary); border: 1px solid var(--admin-border-color); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); transition: all 0.3s ease;"
+                onmouseover="this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.3)'; this.style.transform='translateY(-2px)';"
+                onmouseout="this.style.boxShadow='0 4px 16px rgba(0, 0, 0, 0.2)'; this.style.transform='translateY(0)';">
+
+                <!-- Section Header -->
+                <div
+                    style="background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%); padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            {% if app.app_label == 'auth' %}
+                            <i class="fas fa-shield-alt" style="color: white; font-size: 1.1rem;"></i>
+                            {% elif app.app_label == 'products' %}
+                            <i class="fas fa-tshirt" style="color: white; font-size: 1.1rem;"></i>
+                            {% elif app.app_label == 'contact' %}
+                            <i class="fas fa-envelope" style="color: white; font-size: 1.1rem;"></i>
+                            {% else %}
+                            <i class="fas fa-cog" style="color: white; font-size: 1.1rem;"></i>
+                            {% endif %}
+                        </div>
+                        <a href="{{ app.app_url }}"
+                            style="color: white !important; text-decoration: none !important; font-weight: 600 !important; font-size: 1.15rem;">
+                            {{ app.name }}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Models List -->
+                <div style="padding: 8px;">
+                    {% for model in app.models %}
+                    <div style="background: var(--admin-bg-primary); border: 1px solid var(--admin-border-color); border-radius: 12px; margin: 8px; padding: 16px 20px; transition: all 0.3s ease;"
+                        onmouseover="this.style.background='rgba(255, 107, 53, 0.05)'; this.style.borderColor='var(--admin-accent-primary)';"
+                        onmouseout="this.style.background='var(--admin-bg-primary)'; this.style.borderColor='var(--admin-border-color)';">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <!-- Model Name -->
+                            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                                {% if model.admin_url %}
+                                <a href="{{ model.admin_url }}"
+                                    style="display: flex; align-items: center; gap: 12px; text-decoration: none; flex: 1;">
+                                    <div
+                                        style="width: 36px; height: 36px; background: var(--admin-accent-light); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                        {% if model.name == 'Products' %}
+                                        <i class="fas fa-tshirt"
+                                            style="color: var(--admin-accent-primary); font-size: 1rem;"></i>
+                                        {% elif model.name == 'Users' %}
+                                        <i class="fas fa-user"
+                                            style="color: var(--admin-accent-primary); font-size: 1rem;"></i>
+                                        {% elif model.name == 'Groups' %}
+                                        <i class="fas fa-users-cog"
+                                            style="color: var(--admin-accent-primary); font-size: 1rem;"></i>
+                                        {% elif model.name == 'Inquiries' %}
+                                        <i class="fas fa-inbox"
+                                            style="color: var(--admin-accent-primary); font-size: 1rem;"></i>
+                                        {% else %}
+                                        <i class="fas fa-database"
+                                            style="color: var(--admin-accent-primary); font-size: 1rem;"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <div
+                                            style="color: var(--admin-text-primary); font-weight: 600; font-size: 1rem; margin-bottom: 2px;">
+                                            {{ model.name }}</div>
+
+                                    </div>
+                                </a>
+                                {% else %}
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div
+                                        style="width: 36px; height: 36px; background: var(--admin-accent-light); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-database"
+                                            style="color: var(--admin-accent-primary); font-size: 1rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div
+                                            style="color: var(--admin-text-primary); font-weight: 600; font-size: 1rem;">
+                                            {{ model.name }}</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div style="display: flex; gap: 8px;">
+                                {% if model.add_url %}
+                                <a href="{{ model.add_url }}"
+                                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);"
+                                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)';"
+                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(16, 185, 129, 0.2)';">
+                                    <i class="fas fa-plus" style="font-size: 0.75rem;"></i>
+                                    Add
+                                </a>
+                                {% endif %}
+                                {% if model.admin_url %}
+                                <a href="{{ model.admin_url }}"
+                                    style="background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%); color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);"
+                                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(255, 107, 53, 0.3)';"
+                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(255, 107, 53, 0.2)';">
+                                    <i class="fas fa-edit" style="font-size: 0.75rem;"></i>
+                                    Manage
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div
+                style="background: var(--admin-bg-secondary); border: 1px solid var(--admin-border-color); border-radius: 16px; padding: 48px; text-align: center;">
+                <i class="fas fa-inbox"
+                    style="font-size: 4rem; color: var(--admin-text-muted); margin-bottom: 16px; display: block;"></i>
+                <p style="color: var(--admin-text-secondary); font-size: 1.1rem;">{% trans "You don't have permission to
+                    view or edit anything." %}</p>
+            </div>
+            {% endif %}
+
+        </div>
+
+
+
+    </div>
+
+</div>
+
+<!-- JavaScript for Dynamic Date -->
+<script>
+    // Set current date
+    const dateElement = document.getElementById('current-date');
+    if (dateElement) {
+        const options = { month: 'short', day: 'numeric', year: 'numeric' };
+        const today = new Date().toLocaleDateString('en-US', options);
+        dateElement.textContent = today;
+    }
+</script>
+
+<style>
+    /* Custom Scrollbar for Activity Feed */
+    #content-main>div>div:last-child>div>div:nth-child(2) {
+        scrollbar-width: thin;
+        scrollbar-color: var(--admin-accent-primary) var(--admin-bg-tertiary);
+    }
+
+    #content-main>div>div:last-child>div>div:nth-child(2)::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #content-main>div>div:last-child>div>div:nth-child(2)::-webkit-scrollbar-track {
+        background: var(--admin-bg-tertiary);
+        border-radius: 3px;
+    }
+
+    #content-main>div>div:last-child>div>div:nth-child(2)::-webkit-scrollbar-thumb {
+        background: var(--admin-accent-primary);
+        border-radius: 3px;
+    }
+
+    #content-main>div>div:last-child>div>div:nth-child(2)::-webkit-scrollbar-thumb:hover {
+        background: var(--admin-accent-secondary);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1400px) {
+        #main-layout-container {
+            grid-template-columns: 1fr !important;
+            padding-right: 0 !important;
+        }
+
+        #right-sidebar {
+            display: block !important;
+            width: 100% !important;
+        }
+
+        #content-main>div:first-child>div:last-child {
+            /* Adjust the metrics grid on smaller screens */
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+        }
+    }
+
+    /* Smooth Animations */
+    * {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Hide Default Admin Sidebar */
+    #nav-sidebar,
+    .sticky,
+    .toggle-nav-sidebar {
+        display: none !important;
+    }
+
+    .main.shifted {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Ensure content takes full width */
+    #content {
+        margin-left: 0 !important;
+    }
+</style>
+{% endblock %}

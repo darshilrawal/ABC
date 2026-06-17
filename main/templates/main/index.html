@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ABC - Atal Bharat Creation | B2B Clothing Manufacturer Surat{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-container">
+        <div class="hero-content">
+            <p class="hero-tagline"
+                style="font-size: 1.2rem; font-style: italic; color: var(--accent-primary); margin-bottom: 15px;">
+                "हर भारतवासी की पसंद, 'अटल भारत' के संग"
+            </p>
+            <h1 class="hero-title">
+                Empowering <span>Fashion Business</span> With Quality Manufacturing
+            </h1>
+            <p class="hero-description">
+                Leading clothing manufacturer in Surat, Gujarat. We specialize in premium Kurtis, Tops, Short Kurtis,
+                and Jeans for wholesalers and bulk buyers.
+            </p>
+            <div class="hero-buttons">
+                <a href="{% url 'products:list' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-th-large"></i>
+                    Explore Products
+                </a>
+                <a href="{% url 'contact:inquiry' %}" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-handshake"></i>
+                    Partner With Us
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value">50K+</div>
+                    <div class="hero-stat-label">Monthly Capacity</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">10+</div>
+                    <div class="hero-stat-label">Years Experience</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">500+</div>
+                    <div class="hero-stat-label">Happy Clients</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-image-wrapper">
+                <img src="{% static 'images/hero_image.png' %}" alt="ABC Clothing Manufacturing" class="hero-image">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="section" style="background: var(--bg-secondary);">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-subtitle">Our Products</span>
+            <h2 class="section-title">Explore Our Categories</h2>
+            <p class="section-description">
+                Discover our wide range of premium clothing categories designed for wholesalers and retailers.
+            </p>
+        </div>
+
+        <div class="categories-grid">
+            {% for category in categories %}
+            <a href="{% url 'products:list' %}?category={{ category.slug }}" class="category-card">
+                <div class="category-icon">
+                    <i class="fas {{ category.icon }}"></i>
+                </div>
+                <h3 class="category-name">{{ category.name }}</h3>
+                <p class="category-description">{{ category.description }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Highlights Section -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-subtitle">Why Choose Us</span>
+            <h2 class="section-title">Manufacturing Excellence</h2>
+            <p class="section-description">
+                We combine quality, efficiency, and reliability to deliver the best for your business.
+            </p>
+        </div>
+
+        <div class="highlights-grid">
+            <div class="highlight-card">
+                <div class="highlight-icon">
+                    <i class="fas fa-industry"></i>
+                </div>
+                <div class="highlight-value">50,000+</div>
+                <h3 class="highlight-title">Monthly Production</h3>
+                <p class="highlight-description">Pieces manufactured per month</p>
+            </div>
+
+            <div class="highlight-card">
+                <div class="highlight-icon">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <div class="highlight-value">100%</div>
+                <h3 class="highlight-title">Quality Checked</h3>
+                <p class="highlight-description">Every piece is inspected</p>
+            </div>
+
+            <div class="highlight-card">
+                <div class="highlight-icon">
+                    <i class="fas fa-truck-fast"></i>
+                </div>
+                <div class="highlight-value">15-20</div>
+                <h3 class="highlight-title">Days Delivery</h3>
+                <p class="highlight-description">Fast turnaround time</p>
+            </div>
+
+            <div class="highlight-card">
+                <div class="highlight-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="highlight-value">500+</div>
+                <h3 class="highlight-title">B2B Partners</h3>
+                <p class="highlight-description">Trusted business partners</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+{% if featured_products %}
+<section class="section" style="background: var(--bg-secondary);">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-subtitle">Featured Collection</span>
+            <h2 class="section-title">Our Best Sellers</h2>
+            <p class="section-description">
+                Explore our most popular products loved by retailers across India.
+            </p>
+        </div>
+
+        <div class="products-grid">
+            {% for product in featured_products %}
+            <div class="product-card">
+                <div class="product-image-wrapper">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                    {% else %}
+                    <div class="no-image">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    {% endif %}
+                    <span class="product-category-badge">{{ product.get_category_display }}</span>
+                </div>
+                <div class="product-content">
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name }}</h3>
+                        {% if product.description %}
+                        <p class="product-description">{{ product.description|truncatewords:20 }}</p>
+                        {% else %}
+                        <p class="product-description" style="color: var(--text-muted); font-style: italic;">No
+                            description available</p>
+                        {% endif %}
+                        {% if product.price_range %}
+                        <div class="product-meta">
+                            <span class="product-price">
+                                {% if '₹' in product.price_range %}
+                                {{ product.price_range }}
+                                {% else %}
+                                ₹{{ product.price_range }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'cart:cart_add' product.id %}" class="btn btn-primary btn-sm add-to-cart-btn">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'products:list' %}" class="btn btn-primary btn-lg">
+                View All Products
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Process Section -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-subtitle">How We Work</span>
+            <h2 class="section-title">Our Manufacturing Process</h2>
+            <p class="section-description">
+                From fabric selection to final delivery, we ensure excellence at every step.
+            </p>
+        </div>
+
+        <div class="highlights-grid">
+            <div class="highlight-card">
+                <div class="highlight-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="highlight-value">01</div>
+                <h3 class="highlight-title">Fabric Sourcing</h3>
+                <p class="highlight-description">Premium quality fabric selection</p>
+            </div>
+
+            <div class="highlight-card">
+                <div class="highlight-icon">
+                    <i class="fas fa-cut"></i>
+                </div>
+                <div class="highlight-value">02</div>
+                <h3 class="highlight-title">Precision Cutting</h3>
+                <p class="highlight-description">Accurate cutting with modern machines</p>
+            </div>
+
+            <div class="highlight-card">
+                <div class="highlight-icon">
+                    <i class="fas fa-shirt"></i>
+                </div>
+                <div class="highlight-value">03</div>
+                <h3 class="highlight-title">Expert Stitching</h3>
+                <p class="highlight-description">Skilled craftsmen ensure quality</p>
+            </div>
+
+            <div class="highlight-card">
+                <div class="highlight-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="highlight-value">04</div>
+                <h3 class="highlight-title">Quality & Delivery</h3>
+                <p class="highlight-description">Inspection & safe packaging</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="cta-title">Ready to Partner With Us?</h2>
+            <p class="cta-description">
+                Join 500+ wholesalers and retailers who trust ABC for their clothing needs. Get competitive prices and
+                premium quality.
+            </p>
+            <a href="{% url 'contact:inquiry' %}" class="btn btn-secondary btn-lg">
+                <i class="fas fa-paper-plane"></i>
+                Send Bulk Inquiry
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inquiry Submitted - ABC | Atal Bharat Creation{% endblock %}
+
+{% block content %}
+<section class="success-page">
+    <div class="success-content">
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <h1 class="success-title">Thank You!</h1>
+        <p class="success-description">
+            Your inquiry has been submitted successfully. Our team will review your requirements and get back to you
+            within 24 hours.
+        </p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'main:home' %}" class="btn btn-primary">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+            <a href="{% url 'products:list' %}" class="btn btn-secondary">
+                <i class="fas fa-th-large"></i>
+                Explore Products
+            </a>
+        </div>
+
+        <div
+            style="margin-top: 50px; padding: 30px; background: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <h3 style="margin-bottom: 20px; font-size: 1.2rem;">What Happens Next?</h3>
+            <div style="text-align: left; display: flex; flex-direction: column; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div
+                        style="width: 35px; height: 35px; min-width: 35px; background: var(--accent-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent-primary); font-weight: 600;">
+                        1</div>
+                    <p style="margin: 0; color: var(--text-secondary);">Our team reviews your inquiry</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div
+                        style="width: 35px; height: 35px; min-width: 35px; background: var(--accent-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent-primary); font-weight: 600;">
+                        2</div>
+                    <p style="margin: 0; color: var(--text-secondary);">We prepare a customized quotation</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div
+                        style="width: 35px; height: 35px; min-width: 35px; background: var(--accent-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent-primary); font-weight: 600;">
+                        3</div>
+                    <p style="margin: 0; color: var(--text-secondary);">You receive a call/email within 24 hours</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

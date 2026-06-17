@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bulk Inquiry - ABC | Atal Bharat Creation{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <h1 class="page-title">
+            Bulk <span>Inquiry</span>
+        </h1>
+        <p class="page-subtitle">
+            Interested in wholesale orders? Fill out the form below and our team will get back to you within 24 hours.
+        </p>
+    </div>
+</section>
+
+<!-- Inquiry Form Section -->
+<section class="section">
+    <div class="container" style="max-width: 800px;">
+        <div class="contact-form" style="padding: 50px;">
+            <div class="text-center mb-4">
+                <div
+                    style="width: 70px; height: 70px; margin: 0 auto 20px; background: var(--accent-light); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-handshake" style="font-size: 1.8rem; color: var(--accent-primary);"></i>
+                </div>
+                <h3 style="margin-bottom: 10px;">Let's Partner Together</h3>
+                <p style="color: var(--text-secondary);">Tell us about your business requirements</p>
+            </div>
+
+            <form action="{% url 'contact:inquiry' %}" method="POST">
+                {% csrf_token %}
+
+                <h4 style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
+                    <i class="fas fa-building" style="margin-right: 10px; color: var(--accent-primary);"></i>
+                    Business Information
+                </h4>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="company_name">Company / Business Name *</label>
+                        <input type="text" id="company_name" name="company_name" class="form-control"
+                            placeholder="Enter your company name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="contact_person">Contact Person *</label>
+                        <input type="text" id="contact_person" name="contact_person" class="form-control"
+                            placeholder="Your full name" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="your@email.com"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="phone">Phone / WhatsApp *</label>
+                        <input type="tel" id="phone" name="phone" class="form-control" placeholder="+91 98765 43210"
+                            required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="city">City / Location</label>
+                    <input type="text" id="city" name="city" class="form-control" placeholder="Enter your city">
+                </div>
+
+                <h4 style="margin: 30px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
+                    <i class="fas fa-shopping-bag" style="margin-right: 10px; color: var(--accent-primary);"></i>
+                    Order Requirements
+                </h4>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="product_interest">Product Category *</label>
+                        <select id="product_interest" name="product_interest" class="form-control" required>
+                            <option value="">Select Category</option>
+                            {% for choice in product_choices %}
+                            <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="estimated_quantity">Estimated Quantity</label>
+                        <input type="text" id="estimated_quantity" name="estimated_quantity" class="form-control"
+                            placeholder="e.g., 500-1000 pieces">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="message">Your Requirements *</label>
+                    <textarea id="message" name="message" class="form-control"
+                        placeholder="Please describe your requirements in detail. Include any specific designs, fabrics, colors, or customization needs you have."
+                        style="min-height: 180px;" required>{{ default_message }}</textarea>
+                </div>
+
+                <div
+                    style="background: var(--bg-tertiary); padding: 20px; border-radius: var(--radius-sm); margin-bottom: 25px; border: 1px solid var(--border-color);">
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); margin: 0;">
+                        <i class="fas fa-info-circle" style="margin-right: 8px; color: var(--accent-primary);"></i>
+                        By submitting this form, you agree to be contacted by our sales team regarding your inquiry.
+                    </p>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                    <i class="fas fa-paper-plane"></i>
+                    Submit Inquiry
+                </button>
+            </form>
+        </div>
+
+        <!-- Benefits -->
+        <div style="margin-top: 60px;">
+            <div class="section-header">
+                <h3 class="section-title" style="font-size: 1.8rem;">Why Partner With ABC?</h3>
+            </div>
+
+            <div class="highlights-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h3 class="highlight-title">Competitive Pricing</h3>
+                    <p class="highlight-description">Best wholesale rates for bulk orders</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3 class="highlight-title">Premium Quality</h3>
+                    <p class="highlight-description">100% quality checked products</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-truck-fast"></i>
+                    </div>
+                    <h3 class="highlight-title">Fast Delivery</h3>
+                    <p class="highlight-description">15-20 days turnaround time</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3 class="highlight-title">Dedicated Support</h3>
+                    <p class="highlight-description">Personal account manager</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

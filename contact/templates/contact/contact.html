@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - ABC | Atal Bharat Creation{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="contact-hero">
+    <div class="container">
+        <h1 class="page-title">
+            Contact <span>Us</span>
+        </h1>
+        <p class="page-subtitle">
+            Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+        </p>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="section">
+    <div class="container">
+        <div class="contact-grid">
+            <!-- Contact Information -->
+            <div class="contact-info">
+                <h3>Get in Touch</h3>
+
+                <div class="contact-item">
+                    <div class="contact-item-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-item-content">
+                        <h4>Our Location</h4>
+                        <p>{{ address }}</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-item-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="contact-item-content">
+                        <h4>Contact Persons</h4>
+                        {% for owner in owners %}
+                        <div style="margin-bottom: 12px;">
+                            <strong style="display: block; margin-bottom: 4px;">{{ owner.name }}</strong>
+                            <a href="tel:{{ owner.phone }}"
+                                style="color: var(--accent-primary); text-decoration: none;">{{ owner.phone }}</a>
+                            <a href="https://wa.me/91{{ owner.phone|slice:'4:'|cut:' ' }}" target="_blank"
+                                style="margin-left: 10px; color: #25D366;" title="WhatsApp"><i
+                                    class="fab fa-whatsapp"></i></a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-item-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-item-content">
+                        <h4>Email Address</h4>
+                        <p>{{ email }}</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-item-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="contact-item-content">
+                        <h4>Business Hours</h4>
+                        <p>{{ business_hours }}</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-item-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div class="contact-item-content">
+                        <h4>GST Number</h4>
+                        <p>{{ gst_number }}</p>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 40px;">Follow Us</h3>
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Contact Form -->
+            <div class="contact-form">
+                <h3>Send a Message</h3>
+                <form action="{% url 'contact:inquiry' %}" method="POST">
+                    {% csrf_token %}
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="contact_person">Your Name *</label>
+                            <input type="text" id="contact_person" name="contact_person" class="form-control"
+                                placeholder="Enter your name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="company_name">Company Name *</label>
+                            <input type="text" id="company_name" name="company_name" class="form-control"
+                                placeholder="Your company name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" class="form-control"
+                                placeholder="your@email.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" class="form-control" placeholder="+91 98765 43210"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="product_interest">Product Interest</label>
+                        <select id="product_interest" name="product_interest" class="form-control">
+                            <option value="">Select Category</option>
+                            <option value="kurtis">Kurtis</option>
+                            <option value="short_kurtis">Short Kurtis</option>
+                            <option value="tops">Tops</option>
+                            <option value="jeans">Jeans</option>
+                            <option value="multiple">Multiple Categories</option>
+                            <option value="all">All Products</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="message">Message *</label>
+                        <textarea id="message" name="message" class="form-control"
+                            placeholder="Tell us about your requirements..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                        <i class="fas fa-paper-plane"></i>
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section (Placeholder) -->
+<section style="background: var(--bg-secondary); padding: 60px 0;">
+    <div class="container">
+        <div
+            style="background: var(--bg-tertiary); border-radius: var(--radius-md); height: 400px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color);">
+            <div class="text-center">
+                <i class="fas fa-map-marked-alt"
+                    style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;"></i>
+                <p style="color: var(--text-secondary);">Map Location - Surat, Gujarat, India</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="cta-title">Looking for Bulk Orders?</h2>
+            <p class="cta-description">
+                Fill out our detailed bulk inquiry form for customized pricing and faster response.
+            </p>
+            <a href="{% url 'contact:inquiry' %}" class="btn btn-secondary btn-lg">
+                <i class="fas fa-file-alt"></i>
+                Bulk Inquiry Form
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

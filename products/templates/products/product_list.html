@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Products - ABC | Atal Bharat Creation{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <h1 class="page-title">
+            Our <span>Products</span>
+        </h1>
+        <p class="page-subtitle">
+            Explore our premium collection of Kurtis, Short Kurtis, Tops, and Jeans designed for wholesalers and bulk
+            buyers.
+        </p>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="section">
+    <div class="container">
+        <!-- Category Filter -->
+        <div class="category-filter">
+            {% for category in categories %}
+            <a href="?category={{ category.slug }}"
+                class="filter-btn {% if current_category == category.slug %}active{% endif %}">
+                {{ category.name }}
+            </a>
+            {% endfor %}
+        </div>
+
+        <!-- Products Count -->
+        <p class="text-center mb-4" style="color: var(--text-secondary);">
+            Showing <strong style="color: var(--accent-primary);">{{ total_products }}</strong> products
+            {% if current_category and current_category != 'all' %}
+            in <strong style="color: var(--accent-primary);">{{ current_category|title }}</strong>
+            {% endif %}
+        </p>
+
+        <!-- Products Grid -->
+        {% if page_obj %}
+        <div class="products-grid">
+            {% for product in page_obj %}
+            <div class="product-card">
+                <div class="product-image-wrapper">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                    {% else %}
+                    <div class="no-image">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    {% endif %}
+                    <span class="product-category-badge">{{ product.get_category_display }}</span>
+                </div>
+                <div class="product-content">
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name }}</h3>
+                        {% if product.description %}
+                        <p class="product-description">{{ product.description|truncatewords:20 }}</p>
+                        {% else %}
+                        <p class="product-description" style="color: var(--text-muted); font-style: italic;">No
+                            description available</p>
+                        {% endif %}
+                        {% if product.price_range %}
+                        <div class="product-meta">
+                            <span class="product-price">
+                                {% if '₹' in product.price_range %}
+                                {{ product.price_range }}
+                                {% else %}
+                                ₹{{ product.price_range }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% endif %}
+                        {% if product.fabric %}
+                        <p class="product-fabric">
+                            <i class="fas fa-swatchbook"></i>
+                            {{ product.fabric }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'cart:cart_add' product.id %}" class="btn btn-primary btn-sm add-to-cart-btn">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <nav class="pagination">
+            {% if page_obj.has_previous %}
+            <a href="?{% if current_category %}category={{ current_category }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                class="page-link">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <span class="page-link active">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <a
+                href="?{% if current_category %}category={{ current_category }}&{% endif %}page={{ num }}"
+                class="page-link">{{ num }}</a>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <a href="?{% if current_category %}category={{ current_category }}&{% endif %}page={{ page_obj.next_page_number }}"
+                    class="page-link">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+                {% endif %}
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center" style="padding: 80px 20px;">
+            <div style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <h3 style="margin-bottom: 10px; color: var(--text-primary);">No Products Found</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 25px;">
+                We couldn't find any products in this category. Try exploring other categories.
+            </p>
+            <a href="{% url 'products:list' %}" class="btn btn-primary">
+                View All Products
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Bulk Inquiry CTA -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="cta-title">Interested in Bulk Orders?</h2>
+            <p class="cta-description">
+                Get competitive wholesale prices for your business. Fill out our inquiry form and our team will contact
+                you within 24 hours.
+            </p>
+            <a href="{% url 'contact:inquiry' %}" class="btn btn-secondary btn-lg">
+                <i class="fas fa-paper-plane"></i>
+                Send Bulk Inquiry
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
