@@ -1,0 +1,322 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Custom read-only form-like styles matching mockup */
+    .view-card {
+        background: var(--admin-bg-secondary) !important;
+        border: 1px solid var(--admin-border-color) !important;
+        border-radius: var(--admin-radius-md) !important;
+        padding: 32px !important;
+        margin: 20px auto !important;
+        max-width: 1100px !important;
+        box-shadow: var(--admin-shadow-lg) !important;
+        font-family: var(--admin-font-family) !important;
+    }
+
+    .view-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding-bottom: 20px !important;
+        border-bottom: 1px solid var(--admin-border-color) !important;
+        margin-bottom: 24px !important;
+    }
+
+    .view-title {
+        color: var(--admin-text-primary) !important;
+        font-size: 1.5rem !important;
+        font-weight: 700 !important;
+        margin: 0 !important;
+    }
+
+    .view-grid {
+        display: grid !important;
+        grid-template-columns: 1.8fr 1fr !important;
+        gap: 32px !important;
+    }
+
+    @media (max-width: 768px) {
+        .view-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+
+    .view-form-col {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+    }
+
+    .view-form-row {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 20px !important;
+    }
+
+    @media (max-width: 480px) {
+        .view-form-row {
+            grid-template-columns: 1fr !important;
+        }
+    }
+
+    .view-field-group {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    .view-label {
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        color: var(--admin-text-secondary) !important;
+        text-transform: capitalize !important;
+    }
+
+    .view-label .required {
+        color: var(--admin-accent-primary) !important;
+        margin-left: 2px !important;
+    }
+
+    .view-value-box {
+        background: var(--admin-bg-tertiary) !important;
+        border: 1px solid var(--admin-border-color) !important;
+        border-radius: var(--admin-radius-sm) !important;
+        padding: 12px 16px !important;
+        color: var(--admin-text-primary) !important;
+        font-size: 0.95rem !important;
+        font-weight: 500 !important;
+        min-height: 45px !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .view-value-textarea {
+        background: var(--admin-bg-tertiary) !important;
+        border: 1px solid var(--admin-border-color) !important;
+        border-radius: var(--admin-radius-sm) !important;
+        padding: 16px !important;
+        color: var(--admin-text-primary) !important;
+        font-size: 0.95rem !important;
+        line-height: 1.6 !important;
+        min-height: 120px !important;
+        white-space: pre-wrap !important;
+    }
+
+    /* Dashed image upload box style */
+    .view-image-card {
+        border: 2px dashed var(--admin-border-color) !important;
+        border-radius: var(--admin-radius-md) !important;
+        padding: 24px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 280px !important;
+        background: rgba(255,255,255,0.01) !important;
+        text-align: center !important;
+        transition: border-color 0.2s ease !important;
+    }
+
+    .view-image-card img {
+        max-width: 100% !important;
+        max-height: 220px !important;
+        border-radius: 8px !important;
+        object-fit: contain !important;
+        box-shadow: var(--admin-shadow-md) !important;
+    }
+
+    /* Status checkboxes card */
+    .view-options-card {
+        border: 1px solid var(--admin-border-color) !important;
+        border-radius: var(--admin-radius-md) !important;
+        padding: 24px !important;
+        background: var(--admin-bg-tertiary) !important;
+        margin-top: 20px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+    }
+
+    .view-option-checkbox {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        font-size: 0.95rem !important;
+        color: var(--admin-text-primary) !important;
+        font-weight: 500 !important;
+        cursor: default !important;
+        user-select: none !important;
+    }
+
+    .view-option-checkbox input[type="checkbox"] {
+        width: 18px !important;
+        height: 18px !important;
+        accent-color: var(--admin-accent-primary) !important;
+        pointer-events: none !important;
+    }
+
+    /* Bottom row styling */
+    .view-bottom-row {
+        display: flex !important;
+        justify-content: flex-end !important;
+        gap: 16px !important;
+        margin-top: 32px !important;
+        padding-top: 24px !important;
+        border-top: 1px solid var(--admin-border-color) !important;
+    }
+
+    .btn-view-back {
+        background: transparent !important;
+        border: 1px solid var(--admin-border-light) !important;
+        color: var(--admin-text-secondary) !important;
+        border-radius: var(--admin-radius-sm) !important;
+        padding: 10px 24px !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .btn-view-back:hover {
+        border-color: var(--admin-text-primary) !important;
+        color: var(--admin-text-primary) !important;
+        background: var(--admin-bg-tertiary) !important;
+    }
+
+    .btn-view-edit {
+        background: var(--admin-gradient-primary) !important;
+        border: none !important;
+        color: #ffffff !important;
+        border-radius: var(--admin-radius-sm) !important;
+        padding: 10px 24px !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 4px 12px var(--admin-accent-glow) !important;
+    }
+
+    .btn-view-edit:hover {
+        box-shadow: 0 6px 20px var(--admin-accent-glow) !important;
+        transform: translateY(-1px) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" style="width: 100%;">
+    <div class="view-card">
+        <!-- Header Section -->
+        <div class="view-header">
+            <h2 class="view-title">View Product</h2>
+            <div style="display: flex; gap: 12px;">
+                <a href="{% url 'admin:products_product_changelist' %}" class="btn-view-back">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+                <a href="{% url 'admin:products_product_change' object_id %}" class="btn-view-edit">
+                    <i class="fas fa-edit"></i> Edit Product
+                </a>
+            </div>
+        </div>
+
+        <!-- Form Body Grid -->
+        <div class="view-grid">
+            <!-- Left Side: Specifications -->
+            <div class="view-form-col">
+                <!-- Row 1: Name and Category -->
+                <div class="view-form-row">
+                    <div class="view-field-group">
+                        <span class="view-label">Product Name <span class="required">*</span></span>
+                        <div class="view-value-box">{{ original.name }}</div>
+                    </div>
+                    <div class="view-field-group">
+                        <span class="view-label">Primary Category <span class="required">*</span></span>
+                        <div class="view-value-box">{{ original.get_category_display }}</div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Price and Fabric -->
+                <div class="view-form-row">
+                    <div class="view-field-group">
+                        <span class="view-label">Price Range <span class="required">*</span></span>
+                        <div class="view-value-box" style="color: var(--admin-accent-primary); font-weight: 700;">{{ original.price_range|default:"Not specified" }}</div>
+                    </div>
+                    <div class="view-field-group">
+                        <span class="view-label">Fabric</span>
+                        <div class="view-value-box">{{ original.fabric|default:"Not specified" }}</div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Description -->
+                <div class="view-field-group">
+                    <span class="view-label">Description</span>
+                    <div class="view-value-textarea">{{ original.description|default:"No description provided for this product." }}</div>
+                </div>
+
+                <!-- Row 4: MOQ and Timestamps -->
+                <div class="view-form-row">
+                    <div class="view-field-group">
+                        <span class="view-label">Min Order Quantity</span>
+                        <div class="view-value-box">{{ original.min_order_quantity }} pcs</div>
+                    </div>
+                    <div class="view-field-group">
+                        <span class="view-label">Created At</span>
+                        <div class="view-value-box">{{ original.created_at|date:"F d, Y, f a" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Image and Statuses -->
+            <div>
+                <!-- Image Card -->
+                <div class="view-field-group">
+                    <span class="view-label" style="margin-bottom: 8px;">Product Image</span>
+                    <div class="view-image-card">
+                        {% if original.image %}
+                            <img src="{{ original.image.url }}" alt="{{ original.name }}">
+                        {% else %}
+                            <i class="fas fa-image" style="font-size: 3rem; color: var(--admin-text-muted); margin-bottom: 12px;"></i>
+                            <span style="color: var(--admin-text-muted); font-size: 0.85rem; font-weight: 500;">No image uploaded for this product</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Status Checkbox Options -->
+                <div class="view-options-card">
+                    <span class="view-label" style="border-bottom: 1px solid var(--admin-border-color); padding-bottom: 8px; margin-bottom: 4px;">Visibility & Placement</span>
+                    
+                    <label class="view-option-checkbox">
+                        <input type="checkbox" {% if original.is_active %}checked{% endif %} disabled>
+                        <span>Available for Ordering</span>
+                    </label>
+
+                    <label class="view-option-checkbox">
+                        <input type="checkbox" {% if original.is_featured %}checked{% endif %} disabled>
+                        <span>Featured Product</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Action Row matching mockup Cancel/Create Dish -->
+        <div class="view-bottom-row">
+            <a href="{% url 'admin:products_product_changelist' %}" class="btn-view-back">
+                Cancel
+            </a>
+            <a href="{% url 'admin:products_product_change' object_id %}" class="btn-view-edit">
+                Edit Product
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

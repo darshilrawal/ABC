@@ -3,26 +3,25 @@
 
 {% block title %}{{ title }} | ABC Admin Panel{% endblock %}
 
+{% block welcome-msg %}{% endblock %}
+
 {% block branding %}
-<div id="branding" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-    <div style="display: flex; align-items: center; gap: 16px;">
-        <h1 id="site-name">
-            <a href="{% url 'admin:index' %}" style="display: flex; align-items: center; gap: 14px;">
-                <img src="{% static 'images/logo.jpg' %}" alt="ABC Logo"
-                    style="height: 52px; width: 52px; object-fit: cover; border-radius: 50%; border: 2px solid rgba(255, 107, 53, 0.7); background: #fff; padding: 2px; box-shadow: 0 0 12px rgba(255, 107, 53, 0.4);">
-                <span style="display: flex; flex-direction: column; line-height: 1.2;">
-                    <span style="font-size: 1.1rem; font-weight: 700; color: #ff6b35;">ABC Admin Panel</span>
-                    <span
-                        style="font-size: 0.7rem; color: #888; font-weight: 400; letter-spacing: 1px; text-transform: uppercase;">Atal
-                        Bharat Creation</span>
-                </span>
-            </a>
-        </h1>
+<div id="branding" style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 16px;">
+    <!-- Toggle Button for Mobile -->
+    <button type="button" id="sidebar-mobile-toggle" onclick="toggleMobileSidebar()" 
+            style="background: transparent; border: none; color: white; font-size: 1.25rem; cursor: pointer; padding: 4px; display: none; align-items: center; justify-content: center;">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Mini Brand title -->
+    <div class="header-breadcrumb-title" style="color: var(--admin-text-primary); font-weight: 600; font-size: 1.1rem; font-family: 'Poppins', sans-serif;">
+        ABC Admin Portal
     </div>
-    <a href="/" class="back-to-website-btn" title="Go back to main website">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-            <path
-                d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V400c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v72c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" />
+
+    <!-- Back to Website -->
+    <a href="/" class="back-to-website-btn" title="Go back to main website" style="margin-left: auto;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" style="width: 14px; height: 14px;">
+            <path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V400c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v72c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" />
         </svg>
         Back to Website
     </a>
@@ -36,7 +35,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="{% static 'css/admin_custom.css' %}?v=5">
+<link rel="stylesheet" href="{% static 'css/admin_custom.css' %}?v=9">
 <style>
     /* Critical styles for immediate application */
     body,
@@ -66,22 +65,16 @@
         background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%) !important;
         color: white !important;
     }
-
-    /* Hide Default Admin Sidebar Globally */
-    #nav-sidebar,
-    .toggle-nav-sidebar {
-        display: none !important;
-    }
-
-    .main.shifted {
-        margin-left: 0 !important;
-        width: 100% !important;
-    }
-
-    #content {
-        margin-left: 0 !important;
-    }
 </style>
+
+<script>
+function toggleMobileSidebar() {
+    var sidebar = document.getElementById('nav-sidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('sidebar-open');
+    }
+}
+</script>
 {% endblock %}
 
 {% block userlinks %}

@@ -3,7 +3,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Product, Cart, CartItem
+from .models import Product, Category, Unit, Cart, CartItem
 
 
 def product_list(request):
@@ -12,26 +12,30 @@ def product_list(request):
     
     products = Product.objects.filter(is_active=True)
     
+    current_category_name = 'All Products'
     if category and category != 'all':
-        products = products.filter(category=category)
+        try:
+            curr_cat = Category.objects.get(slug=category)
+            products = products.filter(category=curr_cat)
+            current_category_name = curr_cat.name
+        except Category.DoesNotExist:
+            category = 'all'
     
     # Pagination
     paginator = Paginator(products, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    categories = [
-        {'slug': 'all', 'name': 'All Products'},
-        {'slug': 'kurtis', 'name': 'Kurtis'},
-        {'slug': 'short_kurtis', 'name': 'Short Kurtis'},
-        {'slug': 'tops', 'name': 'Tops'},
-        {'slug': 'jeans', 'name': 'Jeans'},
+    # Load all categories dynamically from database
+    categories = [{'slug': 'all', 'name': 'All Products'}] + [
+        {'slug': cat.slug, 'name': cat.name} for cat in Category.objects.all()
     ]
     
     context = {
         'page_obj': page_obj,
         'categories': categories,
         'current_category': category or 'all',
+        'current_category_name': current_category_name,
         'total_products': products.count(),
     }
     return render(request, 'products/product_list.html', context)

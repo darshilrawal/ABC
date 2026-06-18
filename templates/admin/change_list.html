@@ -1,0 +1,493 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    #changelist-form .submit-row {
+        display: none !important;
+    }
+    
+    p.paginator {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        flex-wrap: wrap !important;
+        gap: 16px !important;
+    }
+    
+    select.admin-page-size-select {
+        width: auto !important;
+        min-width: 70px !important;
+        min-height: auto !important;
+        height: 32px !important;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+        padding-left: 12px !important;
+        padding-right: 28px !important;
+        background-position: right 10px center !important;
+    }
+    
+    p.paginator .page-size-selector span {
+        display: inline !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: none !important;
+        border: none !important;
+    }
+    
+    @media (max-width: 767px) {
+        p.paginator {
+            flex-direction: column !important;
+            justify-content: center !important;
+            text-align: center !important;
+        }
+        .page-size-selector, .paginator-right-container, .pagination-pages {
+            justify-content: center !important;
+            width: 100% !important;
+        }
+    }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const changelistForm = document.getElementById('changelist-form');
+    if (!changelistForm) return;
+
+    // 1. Create control row container
+    const controlRow = document.createElement('div');
+    controlRow.className = 'changelist-control-row';
+    
+    // Find the elements to move
+    const searchBar = document.getElementById('toolbar'); // search form wrapper
+    const actions = document.querySelector('.actions');
+    const filterSidebar = document.getElementById('changelist-filter');
+    
+    // 2. Build filter dropdowns dynamically for all filters
+    const filterContainers = [];
+    if (filterSidebar) {
+        const headings = filterSidebar.querySelectorAll('h3');
+        headings.forEach(heading => {
+            const list = heading.nextElementSibling;
+            if (list && list.tagName === 'UL') {
+                const selectContainer = document.createElement('div');
+                selectContainer.className = 'filter-select-container';
+                selectContainer.style.marginRight = '12px';
+                
+                const select = document.createElement('select');
+                select.className = 'admin-filter-select';
+                select.style.background = 'var(--admin-bg-tertiary)';
+                select.style.border = '1px solid var(--admin-border-color)';
+                select.style.color = 'var(--admin-text-primary)';
+                select.style.padding = '8px 16px';
+                select.style.borderRadius = 'var(--admin-radius-sm)';
+                select.style.fontSize = '0.9rem';
+                select.style.fontWeight = '500';
+                select.style.outline = 'none';
+                
+                // Add header option showing the filter name
+                const headerOption = document.createElement('option');
+                headerOption.textContent = heading.textContent.trim();
+                headerOption.value = '';
+                headerOption.disabled = true;
+                select.appendChild(headerOption);
+                
+                const links = list.querySelectorAll('a');
+                links.forEach(link => {
+                    const option = document.createElement('option');
+                    option.value = link.getAttribute('href');
+                    
+                    let text = link.textContent.trim();
+                    option.textContent = text;
+                    
+                    if (link.parentElement.classList.contains('selected')) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+                
+                select.addEventListener('change', function() {
+                    window.location.href = this.value;
+                });
+                
+                selectContainer.appendChild(select);
+                filterContainers.push(selectContainer);
+            }
+        });
+        
+        // Hide original filter sidebar
+        filterSidebar.style.display = 'none';
+    }
+    
+    // 3. Move search bar
+    if (searchBar) {
+        controlRow.appendChild(searchBar);
+    }
+    
+    // 4. Move all filter dropdowns
+    filterContainers.forEach(container => {
+        controlRow.appendChild(container);
+    });
+    
+    // 5. Move actions and configure them to submit correctly
+    if (actions) {
+        const formInputs = actions.querySelectorAll('input, select, button');
+        formInputs.forEach(input => {
+            input.setAttribute('form', 'changelist-form');
+        });
+        controlRow.appendChild(actions);
+    }
+    
+    // Insert controlRow before changelistForm in the DOM
+    changelistForm.parentNode.insertBefore(controlRow, changelistForm);
+
+    // 6. S.No column injection in the product table
+    const table = document.getElementById('result_list');
+    if (table) {
+        const hasCheckbox = table.querySelector('thead th.action-checkbox-column') !== null;
+        const insertIndex = hasCheckbox ? 1 : 0;
+        
+        // Parse current page index from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageIndex = parseInt(urlParams.get('p') || '0', 10);
+        const pageSize = parseInt(urlParams.get('list_per_page') || '10', 10);
+        const startIndex = pageIndex * pageSize + 1;
+        
+        // Add header
+        const headerRow = table.querySelector('thead tr');
+        if (headerRow) {
+            const th = document.createElement('th');
+            th.scope = 'col';
+            th.className = 'column-sno';
+            th.innerHTML = '<div class="text"><span>S.No</span></div>';
+            headerRow.insertBefore(th, headerRow.children[insertIndex]);
+        }
+        
+        // Add cells to each row
+        const bodyRows = table.querySelectorAll('tbody tr');
+        bodyRows.forEach((row, i) => {
+            const td = document.createElement('td');
+            td.className = 'field-sno';
+            td.textContent = startIndex + i;
+            td.style.fontWeight = '600';
+            td.style.color = 'var(--admin-text-secondary)';
+            row.insertBefore(td, row.children[insertIndex]);
+        });
+    }
+
+    // 7. Intercept delete button clicks for modal confirmation
+    const deleteButtons = document.querySelectorAll('.btn-action-delete');
+    const deleteModal = document.getElementById('delete-confirm-modal');
+    const deleteProductName = document.getElementById('delete-product-name');
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    
+    let deleteUrl = '';
+    
+    deleteButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            deleteUrl = this.getAttribute('href');
+            
+            // Find the product name in the current row
+            const row = this.closest('tr');
+            let productName = 'this item';
+            if (row) {
+                const nameCol = row.querySelector('.field-name a') || 
+                                row.querySelector('th a') || 
+                                row.querySelector('.field-name') || 
+                                row.querySelector('th');
+                if (nameCol) {
+                    productName = `"${nameCol.textContent.trim()}"`;
+                }
+            }
+            
+            if (deleteProductName) {
+                deleteProductName.textContent = productName;
+            }
+            if (deleteModal) {
+                deleteModal.style.display = 'flex';
+            }
+        });
+    });
+    
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function() {
+            if (!deleteUrl) return;
+            
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = deleteUrl;
+            
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            form.appendChild(csrfInput);
+            
+            const postInput = document.createElement('input');
+            postInput.type = 'hidden';
+            postInput.name = 'post';
+            postInput.value = 'yes';
+            form.appendChild(postInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+        });
+    }
+    
+    // 8. Dynamic Page Size Selector
+    const paginator = document.querySelector('p.paginator');
+    if (paginator) {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // 1. Extract page elements (page numbers)
+        const pageElements = Array.from(paginator.querySelectorAll('a, span')).filter(el => {
+            return !el.classList.contains('showall');
+        });
+        
+        const pagesContainer = document.createElement('div');
+        pagesContainer.className = 'pagination-pages';
+        pagesContainer.style.display = 'inline-flex';
+        pagesContainer.style.alignItems = 'center';
+        pagesContainer.style.gap = '4px';
+        
+        pageElements.forEach(el => {
+            pagesContainer.appendChild(el);
+        });
+        
+        // Extract showall link if exists
+        const showAllLink = paginator.querySelector('a.showall');
+        
+        // 2. Clear paginator contents completely
+        paginator.innerHTML = '';
+        
+        // 3. Append pagesContainer
+        paginator.appendChild(pagesContainer);
+        
+        // 4. Create right container for size selector, total entries and showall link
+        const rightContainer = document.createElement('div');
+        rightContainer.className = 'paginator-right-container';
+        rightContainer.style.display = 'inline-flex';
+        rightContainer.style.alignItems = 'center';
+        rightContainer.style.gap = '16px';
+        rightContainer.style.whiteSpace = 'nowrap';
+        rightContainer.style.flexShrink = '0';
+        
+        // Create sizeContainer with Select Dropdown
+        const sizeContainer = document.createElement('div');
+        sizeContainer.className = 'page-size-selector';
+        sizeContainer.style.display = 'inline-flex';
+        sizeContainer.style.alignItems = 'center';
+        sizeContainer.style.gap = '8px';
+        sizeContainer.style.whiteSpace = 'nowrap';
+        sizeContainer.style.flexShrink = '0';
+        
+        const label = document.createElement('span');
+        label.textContent = 'Show per page:';
+        label.style.fontSize = '0.85rem';
+        label.style.color = 'var(--admin-text-secondary)';
+        label.style.fontWeight = '500';
+        label.style.whiteSpace = 'nowrap';
+        sizeContainer.appendChild(label);
+        
+        const select = document.createElement('select');
+        select.className = 'admin-page-size-select';
+        
+        // Style select element for modern dark theme aesthetics
+        select.style.background = 'var(--admin-bg-tertiary)';
+        select.style.border = '1px solid var(--admin-border-color)';
+        select.style.color = 'var(--admin-text-primary)';
+        select.style.padding = '6px 28px 6px 12px';
+        select.style.borderRadius = 'var(--admin-radius-sm)';
+        select.style.fontSize = '0.85rem';
+        select.style.fontWeight = '500';
+        select.style.outline = 'none';
+        select.style.cursor = 'pointer';
+        select.style.appearance = 'none';
+        select.style.webkitAppearance = 'none';
+        select.style.mozAppearance = 'none';
+        // Add custom SVG arrow
+        select.style.backgroundImage = 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23ff6b35" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>\')';
+        select.style.backgroundRepeat = 'no-repeat';
+        select.style.backgroundPosition = 'right 10px center';
+        select.style.transition = 'all var(--admin-transition-fast)';
+        select.style.flexShrink = '0';
+        
+        // Hover/focus effects
+        select.addEventListener('mouseenter', () => {
+            select.style.borderColor = 'var(--admin-accent-primary)';
+            select.style.boxShadow = '0 0 0 2px var(--admin-accent-glow)';
+        });
+        select.addEventListener('mouseleave', () => {
+            select.style.borderColor = 'var(--admin-border-color)';
+            select.style.boxShadow = 'none';
+        });
+        select.addEventListener('focus', () => {
+            select.style.borderColor = 'var(--admin-accent-primary)';
+            select.style.boxShadow = '0 0 0 2px var(--admin-accent-glow)';
+        });
+        
+        const sizes = [10, 20, 25, 50, 100];
+        const currentSize = parseInt(urlParams.get('list_per_page') || '10', 10);
+        
+        sizes.forEach(size => {
+            const option = document.createElement('option');
+            option.value = size;
+            option.textContent = size;
+            option.style.background = 'var(--admin-bg-secondary)';
+            option.style.color = 'var(--admin-text-primary)';
+            if (size === currentSize) {
+                option.selected = true;
+            }
+            select.appendChild(option);
+        });
+        
+        select.addEventListener('change', function() {
+            const newParams = new URLSearchParams(window.location.search);
+            newParams.set('list_per_page', this.value);
+            newParams.delete('p');
+            window.location.search = newParams.toString();
+        });
+        
+        sizeContainer.appendChild(select);
+        rightContainer.appendChild(sizeContainer);
+        
+        // Add total entries badge
+        const totalBadge = document.createElement('span');
+        totalBadge.className = 'total-entries-badge';
+        totalBadge.style.fontSize = '0.85rem';
+        totalBadge.style.color = 'var(--admin-text-secondary)';
+        totalBadge.style.fontWeight = '600';
+        totalBadge.style.background = 'var(--admin-bg-tertiary)';
+        totalBadge.style.border = '1px solid var(--admin-border-color)';
+        totalBadge.style.padding = '6px 12px';
+        totalBadge.style.borderRadius = 'var(--admin-radius-sm)';
+        totalBadge.style.display = 'inline-flex';
+        totalBadge.style.alignItems = 'center';
+        totalBadge.style.gap = '6px';
+        totalBadge.style.whiteSpace = 'nowrap';
+        totalBadge.style.flexShrink = '0';
+        
+        const totalCount = parseInt("{{ cl.result_count }}", 10);
+        let verboseName = totalCount === 1 ? "{{ cl.opts.verbose_name }}" : "{{ cl.opts.verbose_name_plural }}";
+        
+        totalBadge.innerHTML = `<i class="fas fa-list-ol" style="color: var(--admin-accent-primary);"></i> Total: <strong>${totalCount}</strong> ${verboseName}`;
+        rightContainer.appendChild(totalBadge);
+        
+        // Re-append showall link if exists
+        if (showAllLink) {
+            showAllLink.style.fontSize = '0.85rem';
+            showAllLink.style.padding = '6px 12px';
+            showAllLink.style.borderRadius = 'var(--admin-radius-sm)';
+            showAllLink.style.background = 'var(--admin-bg-tertiary)';
+            showAllLink.style.border = '1px solid var(--admin-border-color)';
+            showAllLink.style.color = 'var(--admin-accent-primary)';
+            showAllLink.style.textDecoration = 'none';
+            showAllLink.style.fontWeight = '600';
+            showAllLink.style.transition = 'all var(--admin-transition-fast)';
+            showAllLink.style.whiteSpace = 'nowrap';
+            showAllLink.style.flexShrink = '0';
+            
+            showAllLink.addEventListener('mouseenter', function() {
+                this.style.background = 'var(--admin-accent-light)';
+                this.style.borderColor = 'var(--admin-accent-primary)';
+            });
+            showAllLink.addEventListener('mouseleave', function() {
+                this.style.background = 'var(--admin-bg-tertiary)';
+                this.style.borderColor = 'var(--admin-border-color)';
+            });
+            
+            rightContainer.appendChild(showAllLink);
+        }
+        
+        paginator.appendChild(rightContainer);
+    }
+    
+    window.closeDeleteModal = function() {
+        if (deleteModal) {
+            deleteModal.style.display = 'none';
+        }
+    };
+});
+</script>
+{% endblock %}
+
+{% block content_title %}
+<h1
+    style="color: var(--admin-text-primary); font-size: 2rem; font-weight: 700; margin-bottom: 8px; font-family: var(--admin-font-family); display: flex; align-items: center; gap: 12px;">
+    {% if opts.model_name == 'product' %}
+        <i class="fas fa-tshirt" style="color: var(--admin-accent-primary);"></i>
+    {% elif opts.model_name == 'category' %}
+        <i class="fas fa-tags" style="color: var(--admin-accent-primary);"></i>
+    {% elif opts.model_name == 'unit' %}
+        <i class="fas fa-boxes" style="color: var(--admin-accent-primary);"></i>
+    {% elif opts.model_name == 'inquiry' %}
+        <i class="fas fa-inbox" style="color: var(--admin-accent-primary);"></i>
+    {% elif opts.model_name == 'group' %}
+        <i class="fas fa-users-cog" style="color: var(--admin-accent-primary);"></i>
+    {% elif opts.model_name == 'user' %}
+        <i class="fas fa-users" style="color: var(--admin-accent-primary);"></i>
+    {% else %}
+        <i class="fas fa-database" style="color: var(--admin-accent-primary);"></i>
+    {% endif %}
+    {{ title }}
+</h1>
+<p style="color: var(--admin-text-secondary); font-size: 1rem; margin-bottom: 24px;">
+    {% if opts.model_name == 'product' %}
+        Manage your product catalog, pricing, and inventory
+    {% elif opts.model_name == 'category' %}
+        Organize and group your products into categories
+    {% elif opts.model_name == 'unit' %}
+        Manage product units of measurement
+    {% elif opts.model_name == 'inquiry' %}
+        View and respond to customer inquiries and feedback
+    {% elif opts.model_name == 'group' %}
+        Configure permissions and user access groups
+    {% elif opts.model_name == 'user' %}
+        Manage user accounts, roles, and credentials
+    {% else %}
+        Manage {{ opts.verbose_name_plural }} listings and details
+    {% endif %}
+</p>
+{% endblock %}
+
+{% block search %}
+<div id="toolbar" style="background: transparent; border: none; padding: 0; margin-bottom: 20px;">
+    <form id="changelist-search" method="get">
+        <div>
+            <label for="searchbar"><img src="{% static 'admin/img/search.svg' %}" alt="Search"></label>
+            <input type="text" size="40" name="{{ search_var }}" value="{{ cl.query }}" id="searchbar"
+                placeholder="{% if opts.model_name == 'product' %}Search by name, description, or fabric...{% elif opts.model_name == 'inquiry' %}Search by name, email, or message...{% else %}Search {{ opts.verbose_name_plural }}...{% endif %}" autofocus>
+            <input type="submit" value="Search">
+            {% for pair in cl.params.items %}
+                {% if pair.0 != search_var %}
+                    <input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}">
+                {% endif %}
+            {% endfor %}
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+<!-- Custom Delete Confirmation Modal -->
+<div id="delete-confirm-modal" class="admin-modal" style="display: none;">
+    <div class="admin-modal-backdrop" onclick="closeDeleteModal()"></div>
+    <div class="admin-modal-content">
+        <div class="admin-modal-header">
+            <h3>Delete Confirmation</h3>
+            <button type="button" class="admin-modal-close" onclick="closeDeleteModal()">&times;</button>
+        </div>
+        <div class="admin-modal-body">
+            <p>Are you sure you want to delete <strong id="delete-product-name" style="color: var(--admin-accent-primary);"></strong>?</p>
+            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-top: 8px;">
+                <i class="fas fa-exclamation-triangle" style="color: #dc3545; margin-right: 4px;"></i> This action cannot be undone.
+            </p>
+        </div>
+        <div class="admin-modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()" style="background: #2a2a2a !important; border: 1px solid rgba(255,255,255,0.2) !important; color: #fff !important; border-radius: 4px !important; padding: 8px 16px !important; font-weight: 600 !important; cursor: pointer;">Cancel</button>
+            <button type="button" id="confirm-delete-btn" class="btn btn-danger" style="background: #dc3545 !important; border: none !important; color: #fff !important; border-radius: 4px !important; padding: 8px 16px !important; font-weight: 600 !important; cursor: pointer; box-shadow: 0 4px 12px rgba(220,53,69,0.3) !important;">Yes, delete</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

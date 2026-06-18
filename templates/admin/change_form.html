@@ -1,31 +1,47 @@
 {% extends "admin/change_form.html" %}
-{% load static %}
+{% load static admin_modify admin_urls %}
+
+{% block object-tools %}
+<ul class="object-tools" style="margin-top: -45px !important; margin-bottom: 20px !important;">
+    <li>
+        <a href="{% url opts|admin_urlname:'changelist' %}" class="viewsitelink" style="background: #2a2a2a !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; color: #ffffff !important; border-radius: 4px !important; padding: 8px 16px !important; font-weight: 600 !important; text-transform: uppercase !important; font-size: 0.85rem !important; display: inline-flex !important; align-items: center !important; gap: 6px !important; text-decoration: none !important;">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </li>
+    {% if change and not is_popup %}
+        {% block object-tools-items %}
+            {% change_form_object_tools %}
+        {% endblock %}
+    {% endif %}
+</ul>
+{% endblock %}
 
 {% block content_title %}
 {% if original %}
 <h1
     style="color: var(--admin-text-primary); font-size: 2rem; font-weight: 700; margin-bottom: 8px; font-family: var(--admin-font-family); display: flex; align-items: center; gap: 12px;">
     <i class="fas fa-edit" style="color: var(--admin-accent-primary);"></i>
-    Edit Product: {{ original }}
+    Edit {{ opts.verbose_name|title }}: {{ original }}
 </h1>
 {% else %}
 <h1
     style="color: var(--admin-text-primary); font-size: 2rem; font-weight: 700; margin-bottom: 8px; font-family: var(--admin-font-family); display: flex; align-items: center; gap: 12px;">
     <i class="fas fa-plus-circle" style="color: var(--admin-accent-primary);"></i>
-    Add New Product
+    Add New {{ opts.verbose_name|title }}
 </h1>
 {% endif %}
 <p style="color: var(--admin-text-secondary); font-size: 1rem; margin-bottom: 24px;">
     {% if original %}
-    Update product details, pricing, and availability
+    Update {{ opts.verbose_name }} details and configuration
     {% else %}
-    Create a new product for your catalog
+    Create a new {{ opts.verbose_name }} entry
     {% endif %}
 </p>
 {% endblock %}
 
 {% block after_field_sets %}
 {{ block.super }}
+{% if opts.model_name == 'product' %}
 <div
     style="background: var(--admin-bg-secondary); border: 1px solid var(--admin-border-color); border-left: 4px solid var(--admin-accent-primary); border-radius: var(--admin-radius-md); padding: 16px 20px; margin: 24px 0; box-shadow: var(--admin-shadow-sm);">
     <h3
@@ -36,8 +52,9 @@
     <ul style="color: var(--admin-text-secondary); font-size: 0.9rem; line-height: 1.8; margin: 0; padding-left: 24px;">
         <li>Use high-quality images for better product presentation</li>
         <li>Description field is optional but recommended for SEO</li>
-        <li>Price range should include the ₹ symbol (e.g., ₹250 - ₹450)</li>
+        <li>Price range should include the ₹ symbol (e.g., ₹250)</li>
         <li>Mark products as "Featured" to display them on the homepage</li>
     </ul>
 </div>
+{% endif %}
 {% endblock %}

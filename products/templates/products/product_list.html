@@ -34,7 +34,7 @@
         <p class="text-center mb-4" style="color: var(--text-secondary);">
             Showing <strong style="color: var(--accent-primary);">{{ total_products }}</strong> products
             {% if current_category and current_category != 'all' %}
-            in <strong style="color: var(--accent-primary);">{{ current_category|title }}</strong>
+            in <strong style="color: var(--accent-primary);">{{ current_category_name }}</strong>
             {% endif %}
         </p>
 

@@ -1,0 +1,153 @@
+{% load static %}
+<nav id="nav-sidebar">
+<div class="custom-admin-sidebar">
+    <!-- Branding Header -->
+    <div class="sidebar-brand">
+        <a href="{% url 'admin:index' %}" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+            <img src="{% static 'images/logo.jpg' %}" alt="ABC Logo" class="sidebar-logo">
+            <div class="sidebar-brand-text">
+                <span class="brand-title">ABC Admin</span>
+                <span class="brand-subtitle">Atal Bharat Creation</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- Search Menu -->
+    <div class="sidebar-search">
+        <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="nav-filter" placeholder="Search menu..." onkeyup="filterSidebarMenu()">
+        </div>
+    </div>
+
+    <!-- Menu Items -->
+    <div class="sidebar-menu">
+        
+        <!-- Dashboard Link -->
+        <div class="menu-item-wrapper">
+            <div class="menu-item {% if request.path == '/admin/' %}active{% endif %}">
+                <a href="{% url 'admin:index' %}">
+                    <i class="fas fa-tachometer-alt menu-icon"></i>
+                    <span class="menu-text">Dashboard</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Section: INVENTORY -->
+        <div class="menu-section">
+            <div class="menu-section-header">INVENTORY</div>
+            <div class="menu-section-items">
+                <div class="menu-item {% if '/products/product/' in request.path %}active{% endif %}">
+                    <a href="/admin/products/product/">
+                        <i class="fas fa-tshirt menu-icon"></i>
+                        <span class="menu-text">Products</span>
+                    </a>
+                </div>
+                <div class="menu-item {% if '/products/category/' in request.path %}active{% endif %}">
+                    <a href="/admin/products/category/">
+                        <i class="fas fa-tags menu-icon"></i>
+                        <span class="menu-text">Categories</span>
+                    </a>
+                </div>
+                <div class="menu-item {% if '/products/unit/' in request.path %}active{% endif %}">
+                    <a href="/admin/products/unit/">
+                        <i class="fas fa-boxes menu-icon"></i>
+                        <span class="menu-text">Units</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: CONTACT -->
+        <div class="menu-section">
+            <div class="menu-section-header">CONTACT</div>
+            <div class="menu-section-items">
+                <div class="menu-item {% if '/contact/inquiry/' in request.path %}active{% endif %}">
+                    <a href="/admin/contact/inquiry/">
+                        <i class="fas fa-inbox menu-icon"></i>
+                        <span class="menu-text">Inquiries</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: AUTHENTICATION -->
+        <div class="menu-section">
+            <div class="menu-section-header">AUTHENTICATION</div>
+            <div class="menu-section-items">
+                <div class="menu-item {% if '/auth/group/' in request.path %}active{% endif %}">
+                    <a href="/admin/auth/group/">
+                        <i class="fas fa-users-cog menu-icon"></i>
+                        <span class="menu-text">Groups</span>
+                    </a>
+                </div>
+                <div class="menu-item {% if '/auth/user/' in request.path %}active{% endif %}">
+                    <a href="/admin/auth/user/">
+                        <i class="fas fa-users menu-icon"></i>
+                        <span class="menu-text">Users</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</nav>
+
+<!-- Simple Notification Banner Container -->
+<div id="admin-toast" class="admin-toast">
+    <i class="fas fa-info-circle toast-icon"></i>
+    <span id="toast-message"></span>
+</div>
+
+<script>
+function filterSidebarMenu() {
+    var input = document.getElementById('nav-filter');
+    var filter = input.value.toLowerCase();
+    var sections = document.querySelectorAll('.sidebar-menu .menu-section');
+    
+    sections.forEach(function(section) {
+        var items = section.querySelectorAll('.menu-item');
+        var visibleCount = 0;
+        
+        items.forEach(function(item) {
+            var text = item.querySelector('.menu-text').textContent.toLowerCase();
+            if (text.indexOf(filter) > -1) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Hide/show the section header based on whether it has visible items
+        if (visibleCount > 0) {
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
+    });
+    
+    // Also handle top-level non-section items (like Dashboard)
+    var topLevelItems = document.querySelectorAll('.sidebar-menu > .menu-item-wrapper > .menu-item');
+    topLevelItems.forEach(function(item) {
+        var text = item.querySelector('.menu-text').textContent.toLowerCase();
+        if (text.indexOf(filter) > -1) {
+            item.parentNode.style.display = 'block';
+        } else {
+            item.parentNode.style.display = 'none';
+        }
+    });
+}
+
+function showPlaceholderAlert(sectionName) {
+    var toast = document.getElementById('admin-toast');
+    var message = document.getElementById('toast-message');
+    message.textContent = sectionName + " table and sections will be added in the next step!";
+    toast.classList.add('show');
+    
+    setTimeout(function() {
+        toast.classList.remove('show');
+    }, 3500);
+}
+</script>
