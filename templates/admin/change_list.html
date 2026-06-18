@@ -36,6 +36,34 @@
         border: none !important;
     }
     
+    /* Laptop View Optimization: Enable Horizontal Scroll for Table */
+    #changelist .results {
+        overflow-x: auto !important;
+        max-width: 100% !important;
+        display: block !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    table#result_list th, table#result_list td {
+        white-space: nowrap !important;
+    }
+    
+    /* Laptop View Optimization: Wrap filters and search cleanly on smaller screens */
+    @media (max-width: 1366px) {
+        .changelist-control-row {
+            flex-wrap: wrap !important;
+            gap: 12px !important;
+        }
+        .changelist-control-row #toolbar {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .changelist-control-row .actions {
+            width: 100% !important;
+            justify-content: flex-start !important;
+        }
+    }
+    
     @media (max-width: 767px) {
         p.paginator {
             flex-direction: column !important;
