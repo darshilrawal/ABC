@@ -12,11 +12,6 @@
             style="background: transparent; border: none; color: white; font-size: 1.25rem; cursor: pointer; padding: 4px; display: none; align-items: center; justify-content: center;">
         <i class="fas fa-bars"></i>
     </button>
-    
-    <!-- Mini Brand title -->
-    <div class="header-breadcrumb-title" style="color: var(--admin-text-primary); font-weight: 600; font-size: 1.1rem; font-family: 'Poppins', sans-serif;">
-        ABC Admin Portal
-    </div>
 
     <!-- Back to Website -->
     <a href="/" class="back-to-website-btn" title="Go back to main website" style="margin-left: auto;">
@@ -35,7 +30,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="{% static 'css/admin_custom.css' %}?v=9">
+<link rel="stylesheet" href="{% static 'css/admin_custom.css' %}?v=14">
 <style>
     /* Critical styles for immediate application */
     body,
@@ -65,6 +60,101 @@
         background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%) !important;
         color: white !important;
     }
+
+    /* User Hover Dropdown Styling */
+    .user-dropdown-container {
+        position: relative;
+        display: inline-block;
+    }
+    .user-dropdown-trigger {
+        color: var(--admin-text-secondary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        user-select: none;
+        padding: 6px 12px;
+        border-radius: var(--admin-radius-sm);
+        transition: all 0.2s ease;
+    }
+    .user-dropdown-trigger:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--admin-text-primary);
+    }
+    .user-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: #1a1a1a !important;
+        border: 1px solid #2a2a2a !important;
+        border-radius: 8px !important;
+        min-width: 200px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+        z-index: 1000;
+        padding: 8px 0 !important;
+        margin-top: 4px;
+        transform-origin: top right;
+    }
+    @keyframes dropdownFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .user-dropdown-container:hover .user-dropdown-menu {
+        display: block !important;
+        animation: dropdownFadeIn 0.2s ease forwards;
+    }
+    .user-dropdown-container:hover .user-dropdown-trigger .fa-chevron-down {
+        transform: rotate(180deg);
+        color: var(--admin-accent-primary) !important;
+    }
+    .user-dropdown-menu a {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 12px !important;
+        padding: 10px 20px !important;
+        color: var(--admin-accent-primary) !important;
+        text-decoration: none !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        transition: all 0.2s ease !important;
+        white-space: nowrap !important;
+        text-align: left !important;
+        float: none !important;
+        width: auto !important;
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+    }
+    .user-dropdown-menu a:hover {
+        background: var(--admin-bg-tertiary) !important;
+        color: #ffffff !important;
+        padding-left: 24px !important;
+    }
+    .user-dropdown-menu a.logout-link {
+        color: #dc3545 !important;
+    }
+    .user-dropdown-menu a.logout-link:hover {
+        background: rgba(220, 53, 69, 0.1) !important;
+        color: #ff4d5a !important;
+        padding-left: 24px !important;
+    }
+    .user-dropdown-menu .divider {
+        border-top: 1px solid #2a2a2a !important;
+        margin: 8px 0 !important;
+    }
 </style>
 
 <script>
@@ -80,20 +170,28 @@ function toggleMobileSidebar() {
 {% block userlinks %}
 <div id="user-tools" style="display: flex; align-items: center; gap: 16px; padding: 0; margin: 0;">
     {% if user.is_active and user.is_staff %}
-    <span style="color: var(--admin-text-secondary);">
-        <i class="fas fa-user-circle" style="margin-right: 6px; color: var(--admin-accent-primary);"></i>
-        Welcome, <strong style="color: var(--admin-text-primary);">{{ user.get_username }}</strong>
-    </span>
-    <span style="color: var(--admin-text-muted);">|</span>
-    <a href="{% url 'admin:password_change' %}" style="display: flex; align-items: center; gap: 6px;">
-        <i class="fas fa-key"></i>
-        Change password
-    </a>
-    <span style="color: var(--admin-text-muted);">|</span>
-    <a href="{% url 'admin:logout' %}" style="display: flex; align-items: center; gap: 6px;">
-        <i class="fas fa-sign-out-alt"></i>
-        Log out
-    </a>
+    <div class="user-dropdown-container">
+        <div class="user-dropdown-trigger">
+            <i class="fas fa-user-circle" style="color: var(--admin-accent-primary); font-size: 1.25rem;"></i>
+            <span>Welcome, <strong style="color: var(--admin-text-primary);">{{ user.get_username }}</strong></span>
+            <i class="fas fa-chevron-down" style="font-size: 0.75rem; color: var(--admin-text-secondary); transition: transform 0.2s ease;"></i>
+        </div>
+        <div class="user-dropdown-menu">
+            <a href="{% url 'admin:auth_user_change' user.id %}">
+                <i class="fas fa-user-edit" style="width: 16px; color: var(--admin-accent-primary);"></i>
+                Profile
+            </a>
+            <a href="{% url 'admin:password_change' %}">
+                <i class="fas fa-key" style="width: 16px; color: var(--admin-accent-primary);"></i>
+                Change password
+            </a>
+            <div class="divider"></div>
+            <a href="{% url 'admin:logout' %}" class="logout-link">
+                <i class="fas fa-sign-out-alt" style="width: 16px;"></i>
+                Log out
+            </a>
+        </div>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

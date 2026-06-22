@@ -20,13 +20,11 @@
 {% if original %}
 <h1
     style="color: var(--admin-text-primary); font-size: 2rem; font-weight: 700; margin-bottom: 8px; font-family: var(--admin-font-family); display: flex; align-items: center; gap: 12px;">
-    <i class="fas fa-edit" style="color: var(--admin-accent-primary);"></i>
     Edit {{ opts.verbose_name|title }}: {{ original }}
 </h1>
 {% else %}
 <h1
     style="color: var(--admin-text-primary); font-size: 2rem; font-weight: 700; margin-bottom: 8px; font-family: var(--admin-font-family); display: flex; align-items: center; gap: 12px;">
-    <i class="fas fa-plus-circle" style="color: var(--admin-accent-primary);"></i>
     Add New {{ opts.verbose_name|title }}
 </h1>
 {% endif %}

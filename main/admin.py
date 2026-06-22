@@ -21,13 +21,12 @@ class CustomGroupAdmin(BaseGroupAdmin):
         edit_url = reverse('admin:auth_group_change', args=[obj.pk])
         delete_url = reverse('admin:auth_group_delete', args=[obj.pk])
         return format_html(
-            '<div style="display: flex; gap: 10px; justify-content: flex-end;">'
-            '<a class="button" href="{}" style="padding: 6px 12px; font-size: 0.75rem; line-height: 1; min-width: auto;"><i class="fas fa-edit"></i></a>'
-            '<a class="button deletelink" href="{}" style="padding: 6px 12px; font-size: 0.75rem; line-height: 1; min-width: auto;"><i class="fas fa-trash-alt"></i></a>'
+            '<div style="display: flex; gap: 8px; align-items: center;">'
+            '  <a class="btn-action btn-action-edit" href="{}" title="Edit"><i class="fas fa-edit"></i></a>'
+            '  <a class="btn-action btn-action-delete" href="{}" title="Delete"><i class="fas fa-trash-alt"></i></a>'
             '</div>',
             edit_url, delete_url
         )
-    group_actions.short_description = 'Actions'
     group_actions.short_description = 'Actions'
     group_actions.allow_tags = True
 
@@ -51,9 +50,9 @@ class CustomUserAdmin(UserAdmin):
         edit_url = reverse('admin:auth_user_change', args=[obj.pk])
         delete_url = reverse('admin:auth_user_delete', args=[obj.pk])
         return format_html(
-            '<div style="display: flex; gap: 10px; justify-content: flex-end;">'
-            '<a class="button" href="{}" title="Edit User" style="padding: 6px 12px; font-size: 0.75rem; line-height: 1; min-width: auto;"><i class="fas fa-edit"></i></a>'
-            '<a class="button deletelink" href="{}" title="Delete User" style="padding: 6px 12px; font-size: 0.75rem; line-height: 1; min-width: auto;"><i class="fas fa-trash-alt"></i></a>'
+            '<div style="display: flex; gap: 8px; align-items: center;">'
+            '  <a class="btn-action btn-action-edit" href="{}" title="Edit"><i class="fas fa-edit"></i></a>'
+            '  <a class="btn-action btn-action-delete" href="{}" title="Delete"><i class="fas fa-trash-alt"></i></a>'
             '</div>',
             edit_url, delete_url
         )

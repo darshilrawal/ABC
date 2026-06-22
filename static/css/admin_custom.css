@@ -517,20 +517,28 @@ table tbody tr:hover {
 }
 
 tbody td,
-table tbody td {
+table tbody td,
+tbody th,
+table tbody th {
     padding: 14px 12px !important;
     color: var(--admin-text-primary) !important;
     font-size: 0.9rem !important;
+    font-weight: normal !important;
 }
 
 tbody td a,
-table tbody td a {
+table tbody td a,
+tbody th a,
+table tbody th a {
     color: var(--admin-accent-primary) !important;
     text-decoration: none !important;
     transition: color var(--admin-transition-fast) !important;
 }
 
-tbody td a:hover {
+tbody td a:hover,
+table tbody td a:hover,
+tbody th a:hover,
+table tbody th a:hover {
     color: var(--admin-accent-secondary) !important;
     text-decoration: underline !important;
 }
@@ -2256,17 +2264,17 @@ p.paginator .this-page {
 .breadcrumbs,
 #content {
     margin-left: 280px !important;
+    width: calc(100% - 280px) !important;
+    box-sizing: border-box !important;
 }
 
 #header {
-    width: auto !important;
     display: flex !important;
     align-items: center !important;
 }
 
 #content {
     padding: 30px 24px !important;
-    box-sizing: border-box !important;
 }
 
 /* Toast/Notification Banner styling */
@@ -2314,6 +2322,8 @@ p.paginator .this-page {
     .breadcrumbs,
     #content {
         margin-left: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
     
     #sidebar-mobile-toggle {
@@ -2348,6 +2358,13 @@ ul.object-tools a {
     gap: 6px !important;
     box-shadow: none !important;
     transition: all 0.2s ease !important;
+}
+
+.object-tools a.addlink::before,
+ul.object-tools a.addlink::before {
+    content: "\f067" !important;
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
 }
 
 .object-tools a.addlink:hover,
@@ -2830,10 +2847,153 @@ p.paginator a.showall {
     background: transparent !important;
 }
 
-/* Image remove button hover transitions */
+/* Style image remove button */
 .image-remove-btn {
+    display: inline-flex;
+    align-items: center !important;
+    gap: 6px !important;
     transition: opacity var(--admin-transition-fast) !important;
 }
 .image-remove-btn:hover {
     opacity: 0.8 !important;
+}
+
+/* Hide related model links (add, edit, delete, view icons) next to ForeignKey dropdowns */
+.related-widget-wrapper-link,
+.add-related,
+.change-related,
+.delete-related,
+.view-related {
+    display: none !important;
+}
+
+/* ==========================================================================
+   Laptop View Optimization (1025px - 1440px)
+   Reduces layouts, margins, paddings, and font sizes to maximize visible area.
+   ========================================================================== */
+@media (min-width: 1025px) and (max-width: 1440px) {
+    /* 1. Shrink sidebar width to 240px to give more room to the main content */
+    #nav-sidebar {
+        width: 240px !important;
+    }
+    #header,
+    .breadcrumbs,
+    #content {
+        margin-left: 240px !important;
+        width: calc(100% - 240px) !important;
+        box-sizing: border-box !important;
+    }
+    .custom-admin-sidebar {
+        padding: 16px 12px !important;
+    }
+    .sidebar-brand {
+        padding-bottom: 16px !important;
+        margin-bottom: 16px !important;
+    }
+    .sidebar-search {
+        margin-bottom: 16px !important;
+    }
+    .sidebar-menu {
+        gap: 12px !important;
+    }
+    .menu-item a {
+        padding: 8px 10px !important;
+        font-size: 0.85rem !important;
+        gap: 10px !important;
+    }
+    
+    /* 2. Reduce padding of the main content container to maximize workspace */
+    #content {
+        padding: 20px 16px !important;
+    }
+    
+    /* 3. Reduce padding and font sizes of the table cells */
+    thead th,
+    table thead th {
+        padding: 10px 8px !important;
+        font-size: 0.85rem !important;
+    }
+    tbody td,
+    table tbody td,
+    tbody th,
+    table tbody th {
+        padding: 10px 8px !important;
+        font-size: 0.82rem !important;
+    }
+    
+    /* 4. Action buttons: make them slightly smaller to avoid table row height expansion */
+    .btn-action {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    .btn-action i {
+        font-size: 0.8rem !important;
+    }
+    
+    /* 5. Compact control row (Search & Actions) */
+    .changelist-control-row {
+        padding: 12px 16px !important;
+        gap: 16px !important;
+        margin-bottom: 16px !important;
+    }
+    .changelist-control-row #toolbar {
+        width: 300px !important;
+    }
+    .changelist-control-row #changelist-search {
+        height: 38px !important;
+    }
+    .changelist-control-row #changelist-search > div {
+        height: 36px !important;
+    }
+    .changelist-control-row #changelist-search #searchbar {
+        height: 34px !important;
+        font-size: 0.85rem !important;
+        padding: 4px 80px 4px 10px !important;
+    }
+    .changelist-control-row #changelist-search input[type="submit"] {
+        height: 26px !important;
+        padding: 2px 12px !important;
+        font-size: 0.75rem !important;
+    }
+    .changelist-control-row .actions select,
+    .category-select {
+        height: 38px !important;
+        padding: 8px 30px 8px 12px !important;
+        font-size: 0.85rem !important;
+        min-width: 150px !important;
+    }
+    .changelist-control-row .actions button {
+        height: 38px !important;
+        padding: 8px 16px !important;
+        font-size: 0.85rem !important;
+    }
+    .changelist-control-row .actions span.action-counter {
+        height: 38px !important;
+        padding: 8px 12px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    /* Header styling updates */
+    #header {
+        padding: 12px 16px !important;
+    }
+    #branding h1, #site-name a {
+        font-size: 1.25rem !important;
+    }
+    .header-breadcrumb-title {
+        font-size: 0.95rem !important;
+    }
+    #user-tools {
+        font-size: 0.8rem !important;
+        gap: 12px !important;
+    }
+    
+    /* Headings on list pages and change forms */
+    h1 {
+        font-size: 1.6rem !important;
+    }
+    #content-main p {
+        font-size: 0.9rem !important;
+        margin-bottom: 16px !important;
+    }
 }
