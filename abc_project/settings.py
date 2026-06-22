@@ -153,6 +153,10 @@ STORAGES = {
     },
 }
 
+# Legacy settings for compatibility with older packages (like django-cloudinary-storage)
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+DEFAULT_FILE_STORAGE = DEFAULT_STORAGE_BACKEND
+
 
 # Media files
 MEDIA_URL = '/media/'
